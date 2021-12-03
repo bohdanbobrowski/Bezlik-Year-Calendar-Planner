@@ -182,12 +182,12 @@ class ScYearCalendar:
         defineColorCMYK("gridColor", 0, 0, 0, 255)  # default is Dark Grey
         defineColorCMYK("gridMonthHeading", 0, 0, 0, 255)  # default is Dark Grey
         # styles
-        scribus.createCharStyle(name=self.cStylMonth, font="Lato Bold", fontsize=(self.rowSize // 1.7), fillcolor="txtMonthHeading")
-        scribus.createCharStyle(name=self.cStylDayNames, font="Lato Regular", fontsize=(self.rowSize // 5), fillcolor="txtDayNames")
-        scribus.createCharStyle(name=self.cStylWeekNo, font="Lato Regular", fontsize=(self.rowSize // 5), fillcolor="txtWeekNo")
-        scribus.createCharStyle(name=self.cStylHolidays, font="Lato Regular", fontsize=(self.rowSize // 2), fillcolor="txtHoliday")
-        scribus.createCharStyle(name=self.cStylDate, font="Lato Regular", fontsize=(self.rowSize // 2), fillcolor="txtDate")
-        scribus.createCharStyle(name=self.cStylDateWeekend, font="Lato Bold", fontsize=(self.rowSize // 2), fillcolor="txtDate")
+        scribus.createCharStyle(name=self.cStylMonth, font="Lato Bold", fontsize=30, fillcolor="txtMonthHeading")
+        scribus.createCharStyle(name=self.cStylDayNames, font="Lato Regular", fontsize=10, fillcolor="txtDayNames")
+        scribus.createCharStyle(name=self.cStylWeekNo, font="Lato Regular", fontsize=10, fillcolor="txtWeekNo")
+        scribus.createCharStyle(name=self.cStylHolidays, font="Lato Regular", fontsize=30, fillcolor="txtHoliday")
+        scribus.createCharStyle(name=self.cStylDate, font="Lato Regular", fontsize=30, fillcolor="txtDate")
+        scribus.createCharStyle(name=self.cStylDateWeekend, font="Lato Bold", fontsize=30, fillcolor="txtDate")
         scribus.createParagraphStyle(name=self.pStyleMonth, linespacingmode=2, alignment=ALIGN_CENTERED, charstyle=self.cStylMonth)
         scribus.createParagraphStyle(name=self.pStyleDayNames, linespacingmode=2, alignment=ALIGN_CENTERED, charstyle=self.cStylDayNames)
         scribus.createParagraphStyle(name=self.pStyleWeekNo,  linespacingmode=2, alignment=ALIGN_CENTERED, charstyle=self.cStylWeekNo)
