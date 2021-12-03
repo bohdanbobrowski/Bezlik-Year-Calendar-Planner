@@ -8,8 +8,6 @@ import datetime
 from datetime import date, timedelta
 import csv
 import platform
-from inspect import currentframe, getframeinfo
-import os
 
 try:
     from scribus import *
@@ -74,16 +72,12 @@ class ScYearCalendar:
     def __init__(
             self,
             year,
-            weekNr=False,
-            weekNrHd="",
             lang='English',
             holidaysList=list()
     ):
         self.year = year
         self.months = [month for month in range(1, 13)]
         self.nrVmonths = 12
-        self.weekNr = weekNr
-        self.weekNrHd = weekNrHd
         self.holidaysList = holidaysList
         if len(self.holidaysList) != 0:
             self.drawHolidays = True
@@ -126,8 +120,12 @@ class ScYearCalendar:
         progressTotal(12)
 
     def createCalendar(self):
+        # UNIT_MILLIMETERS
         newDocument(PAPER_A1, (15, 15, 100, 15), LANDSCAPE, 1, UNIT_MILLIMETERS, NOFACINGPAGES, FIRSTPAGERIGHT, 1)
-        setUnit(UNIT_POINTS)
+        # setUnit(UNIT_PT)
+        setUnit(UNIT_MILLIMETERS)
+        zoomDocument(16)
+        scrollDocument(0,0)
         self.setupDocVariables()
         setActiveLayer(self.layerCal)
         run = 0
@@ -155,10 +153,11 @@ class ScYearCalendar:
         self.height = self.pageY - self.marginT - self.marginB
         self.rows = 32
         self.rowSize = (self.height) / self.rows
+        print("self.rowSize={}".format(self.rowSize))
         self.mthcols = 2
         self.cols = 12
         self.colSize = (self.width) / self.cols
-        baseLine = self.rowSize
+        print("self.colSize={}".format(self.colSize))
         # with ascender and descender characters
         # default calendar colors
         defineColorCMYK("Black", 0, 0, 0, 255)
@@ -193,10 +192,10 @@ class ScYearCalendar:
         scribus.createParagraphStyle(name=self.pStyleDayNames, linespacingmode=2, alignment=ALIGN_CENTERED, charstyle=self.cStylDayNames)
         scribus.createParagraphStyle(name=self.pStyleWeekNo,  linespacingmode=2, alignment=ALIGN_CENTERED, charstyle=self.cStylWeekNo)
         scribus.createParagraphStyle(name=self.pStyleWeekNo,  linespacingmode=2, alignment=ALIGN_CENTERED, charstyle=self.cStylWeekNo)
-        scribus.createParagraphStyle(name=self.pStyleHolidays, linespacingmode=3, alignment=ALIGN_LEFT, charstyle=self.cStylHolidays)
+        scribus.createParagraphStyle(name=self.pStyleHolidays, linespacingmode=2, alignment=ALIGN_LEFT, charstyle=self.cStylHolidays)
         scribus.createParagraphStyle(name=self.pStyleDate, linespacingmode=2, alignment=ALIGN_LEFT, charstyle=self.cStylDate)
-        scribus.createParagraphStyle(name=self.pStyleWeekend, linespacingmode=3, alignment=ALIGN_LEFT, charstyle=self.cStylDateWeekend)
-        scribus.createParagraphStyle(name=self.pStyleHoliday, linespacingmode=3, alignment=ALIGN_LEFT, charstyle=self.cStylDateWeekend)
+        scribus.createParagraphStyle(name=self.pStyleWeekend, linespacingmode=2, alignment=ALIGN_LEFT, charstyle=self.cStylDateWeekend)
+        scribus.createParagraphStyle(name=self.pStyleHoliday, linespacingmode=2, alignment=ALIGN_LEFT, charstyle=self.cStylDateWeekend)
         scribus.createParagraphStyle(name=self.pStyleLegend,  linespacingmode=0, linespacing=(self.rowSize * 0.6), alignment=ALIGN_LEFT, charstyle=self.cStylLegend)
         scribus.createCustomLineStyle(self.gridLineStyle, [
             {
@@ -222,7 +221,7 @@ class ScYearCalendar:
                 if day.month == month:
                     row += 1
                     cel = createText(
-                        10 + (month-1) * self.colSize,
+                        self.marginL + 10 + (month-1) * self.colSize,
                         self.marginT + row * self.rowSize,
                         self.colSize - 20,
                         self.rowSize
@@ -236,7 +235,7 @@ class ScYearCalendar:
                     if day.day > 9:
                         m = 12
                     cel_label = createText(
-                        (28 + m) + (month - 1) * self.colSize,
+                        self.marginL + (28 + m) + (month - 1) * self.colSize,
                         self.marginT + row * self.rowSize,
                         (60 - m),
                         self.rowSize - 9
@@ -255,7 +254,7 @@ class ScYearCalendar:
                         setFillColor("fillWeekend", cel)
                     else:
                         setParagraphStyle(self.pStyleDate, cel)
-                    setTextVerticalAlignment(ALIGNV_TOP, cel)
+                    setTextVerticalAlignment(ALIGNV_CENTERED, cel)
                     for x in range(len(self.holidaysList)):
                         if (self.holidaysList[x][0] == (day.year) and
                                 self.holidaysList[x][1] == str(day.month) and
@@ -283,8 +282,8 @@ class ScYearCalendar:
         """ Draw month calendars header """
         monthName = months_names[month-1]
         cel = createText(
-            10 + (month-1) * self.colSize,
-            0,
+            self.marginL + 10 + (month-1) * self.colSize,
+            self.marginT,
             self.colSize - 20,
             self.rowSize
         )
@@ -357,13 +356,16 @@ class calcHolidays:
     def importHolidays(self):
         """ Import local holidays from '*holidays.txt'-file."""
         # holidaysFile = filedialog.askopenfilename(title="Open the 'holidays.txt'-file or cancel")
-        file_path = os.path.realpath(__file__)
-        holidaysFile = os.path.join(file_path, "PL_holidays.txt")
+        print(__file__)
+        from os import path
+        file_path = path.dirname(__file__)
+        holidaysFile = path.join(file_path, "PL_holidays.txt")
         print(holidaysFile)
         holidaysList=list()
         try:
             csvfile = open(holidaysFile, mode="rt",  encoding="utf8")
-        except:
+        except Exception as e:
+            print(e)
             print("Holidays wil NOT be shown.")
             messageBox("Warning:", "Holidays wil NOT be shown.", ICON_CRITICAL)
             return holidaysList # returns an empty holidays list
@@ -580,7 +582,7 @@ class TkCalendar(Frame):
         except locale.Error:
             print("Language " + x + " is not installed on your operating system.")
             self.statusVar.set("Language '" + x + "' is not installed on your operating system")
-            return
+            returnroot
         self.realLangChange(langX)
 
     def realLangChange(self, langX='Polish'):
@@ -612,21 +614,11 @@ class TkCalendar(Frame):
         except ValueError:
             self.statusVar.set('Year must be in the "YYYY" format e.g. 2020.')
             return
-        # inner margins
-        if ((float(self.marginTop.get()) - float(self.marginBottom.get())) < 0 
-            or (float(self.marginRight.get()) - float(self.marginLeft.get())) < 0):
-            self.statusVar.set('Inner margins must be less than offsets.')
-            return
         fonts = getFontNames()
         if self.font not in fonts:
             self.statusVar.set('Please select a font.')
             return
-        # week numbers
-        if self.weekNrVar.get() == 0:
-            weekNr = False
-        else:
-            weekNr = True
-        if self.holidaysVar.get() == 0: 
+        if self.holidaysVar.get() == 0:
             holidaysList = list()
         else:
             holidaysList = []
@@ -639,8 +631,6 @@ class TkCalendar(Frame):
         self.statusVar.set('defining ScYearCalendar')
         cal = ScYearCalendar(
             year=year,
-            weekNr=weekNr,
-            weekNrHd=self.weekNrHdVar.get(),
             lang=self.lang,
             holidaysList=holidaysList
         )
