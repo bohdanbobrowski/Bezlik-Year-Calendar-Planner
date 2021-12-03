@@ -67,15 +67,23 @@ months_names = [
     "Grudzień"
 ]
 
-class ScYearCalendar:
+class BezlikYearCalendar:
 
     def __init__(
             self,
             year,
+            marginTop=15,
+            marginRight=15,
+            marginBottom=15,
+            marginLeft=15,
             lang='English',
             holidaysList=list()
     ):
         self.year = year
+        self.marginTop = marginTop
+        self.marginRight = marginRight
+        self.marginBottom = marginBottom
+        self.marginLeft = marginLeft
         self.months = [month for month in range(1, 13)]
         self.nrVmonths = 12
         self.holidaysList = holidaysList
@@ -96,17 +104,17 @@ class ScYearCalendar:
         # layers
         self.layerCal = 'Calendar'
         # character styles
-        self.cStylMonth = "char_style_Month"
-        self.cStylDayNames = "char_style_DayNames"
-        self.cStylWeekNo = "char_style_WeekNo"
-        self.cStylHolidays = "char_style_Holidays"
-        self.cStylDate = "char_style_Date"
-        self.cStylDateWeekend = "char_style_DateWeekend"
-        self.cStylLegend = "char_style_Legend"
+        self.cStyleMonth = "char_style_Month"
+        self.cStyleDayNames = "char_style_DayNames"
+        self.cStyleHolidayLabel = "char_style_WeekNo"
+        self.cStyleHolidays = "char_style_Holidays"
+        self.cStyleDate = "char_style_Date"
+        self.cStyleDateWeekend = "char_style_DateWeekend"
+        self.cStyleLegend = "char_style_Legend"
         # paragraph styles
         self.pStyleMonth = "par_style_Month"
         self.pStyleDayNames = "par_style_DayNames"
-        self.pStyleWeekNo = "par_style_WeekNo"
+        self.pStyleHolidayLabel = "par_style_WeekNo"
         self.pStyleHolidays = "par_style_Holidays"
         self.pStyleDate = "par_style_Date"
         self.pStyleWeekend = "par_style_Weekend"
@@ -120,9 +128,8 @@ class ScYearCalendar:
         progressTotal(12)
 
     def createCalendar(self):
-        # UNIT_MILLIMETERS
-        newDocument(PAPER_A1, (15, 15, 100, 15), LANDSCAPE, 1, UNIT_MILLIMETERS, NOFACINGPAGES, FIRSTPAGERIGHT, 1)
-        # setUnit(UNIT_PT)
+        newDocument(PAPER_A1, (self.marginLeft, self.marginRight, self.marginTop, self.marginBottom),
+                    LANDSCAPE, 1, UNIT_MILLIMETERS, NOFACINGPAGES, FIRSTPAGERIGHT, 1)
         setUnit(UNIT_MILLIMETERS)
         zoomDocument(16)
         scrollDocument(0,0)
@@ -153,58 +160,45 @@ class ScYearCalendar:
         self.height = self.pageY - self.marginT - self.marginB
         self.rows = 32
         self.rowSize = (self.height) / self.rows
-        print("self.rowSize={}".format(self.rowSize))
         self.mthcols = 2
         self.cols = 12
         self.colSize = (self.width) / self.cols
-        print("self.colSize={}".format(self.colSize))
-        # with ascender and descender characters
-        # default calendar colors
+
         defineColorCMYK("Black", 0, 0, 0, 255)
         defineColorCMYK("White", 0, 0, 0, 0)
-        defineColorCMYK("fillMonthHeading", 0, 0, 0, 0)  # default is White
-        defineColorCMYK("txtMonthHeading", 0, 0, 0, 255)  # default is Black
-        defineColorCMYK("fillDayNames", 0, 0, 0, 200)  # default is Dark Grey
-        defineColorCMYK("txtDayNames", 0, 0, 0, 0)  # default is White
-        defineColorCMYK("fillWeekNo", 0, 0, 0, 200)  # default is Dark Grey
-        defineColorCMYK("txtWeekNo", 0, 0, 0, 0)  # default is White
-        defineColorCMYK("fillDate", 0, 0, 0, 0)  # default is White
-        defineColorCMYK("txtDate", 0, 0, 0, 255)  # default is Black
-        defineColorCMYK("fillWeekend", 0, 0, 0, 25)  # default is Light Grey
-        defineColorCMYK("txtWeekend", 0, 0, 0, 200)  # default is Dark Grey
-        defineColorCMYK("fillWeekend2", 0, 0, 0, 0)  # default is White
-        defineColorCMYK("fillHoliday", 0, 0, 0, 25)  # default is Light Grey
-        defineColorCMYK("txtHoliday", 0, 234, 246, 0)  # default is Red
-        defineColorCMYK("fillSpecialDate", 0, 0, 0, 0)  # default is White
-        defineColorCMYK("txtSpecialDate", 0, 0, 0, 128)  # default is Middle Grey
-        defineColorCMYK("fillVacation", 0, 0, 0, 25)  # default is Light Grey
-        defineColorCMYK("txtVacation", 0, 0, 0, 255)  # default is Black
-        defineColorCMYK("gridColor", 0, 0, 0, 255)  # default is Dark Grey
-        defineColorCMYK("gridMonthHeading", 0, 0, 0, 255)  # default is Dark Grey
-        # styles
-        scribus.createCharStyle(name=self.cStylMonth, font="Lato Bold", fontsize=70, fillcolor="txtMonthHeading")
-        scribus.createCharStyle(name=self.cStylDayNames, font="Lato Regular", fontsize=30, fillcolor="txtDayNames")
-        scribus.createCharStyle(name=self.cStylWeekNo, font="Lato Regular", fontsize=30, fillcolor="txtWeekNo")
-        scribus.createCharStyle(name=self.cStylHolidays, font="Lato Regular", fontsize=70, fillcolor="txtHoliday")
-        scribus.createCharStyle(name=self.cStylDate, font="Lato Regular", fontsize=70, fillcolor="txtDate")
-        scribus.createCharStyle(name=self.cStylDateWeekend, font="Lato Bold", fontsize=70, fillcolor="txtDate")
-        scribus.createParagraphStyle(name=self.pStyleMonth, linespacingmode=2, alignment=ALIGN_CENTERED, charstyle=self.cStylMonth)
-        scribus.createParagraphStyle(name=self.pStyleDayNames, linespacingmode=2, alignment=ALIGN_CENTERED, charstyle=self.cStylDayNames)
-        scribus.createParagraphStyle(name=self.pStyleWeekNo,  linespacingmode=2, alignment=ALIGN_CENTERED, charstyle=self.cStylWeekNo)
-        scribus.createParagraphStyle(name=self.pStyleWeekNo,  linespacingmode=2, alignment=ALIGN_CENTERED, charstyle=self.cStylWeekNo)
-        scribus.createParagraphStyle(name=self.pStyleHolidays, linespacingmode=2, alignment=ALIGN_LEFT, charstyle=self.cStylHolidays)
-        scribus.createParagraphStyle(name=self.pStyleDate, linespacingmode=2, alignment=ALIGN_LEFT, charstyle=self.cStylDate)
-        scribus.createParagraphStyle(name=self.pStyleWeekend, linespacingmode=2, alignment=ALIGN_LEFT, charstyle=self.cStylDateWeekend)
-        scribus.createParagraphStyle(name=self.pStyleHoliday, linespacingmode=2, alignment=ALIGN_LEFT, charstyle=self.cStylDateWeekend)
+        defineColorCMYK("LightGrey", 0, 0, 0, 25)  
+        defineColorCMYK("DarkGrey", 0, 0, 0, 210)
+        defineColorCMYK("MediumGrey", 0, 0, 0, 128)
+        defineColorCMYK("Red", 0, 234, 246, 0)
+
+        scribus.createCharStyle(name=self.cStyleMonth, font="Lato Bold", fontsize=70, fillcolor="Black")
+        scribus.createParagraphStyle(name=self.pStyleMonth, linespacingmode=2, alignment=ALIGN_CENTERED, charstyle=self.cStyleMonth)
+
+        scribus.createCharStyle(name=self.cStyleHolidays, font="Lato Regular", fontsize=70, fillcolor="Red")
+        scribus.createParagraphStyle(name=self.pStyleHolidays, linespacingmode=0, linespacing=30, alignment=ALIGN_LEFT, charstyle=self.cStyleHolidays)
+
+        scribus.createCharStyle(name=self.cStyleDate, font="Lato Regular", fontsize=70, fillcolor="Black")
+        scribus.createParagraphStyle(name=self.pStyleDate, linespacingmode=2, alignment=ALIGN_LEFT, charstyle=self.cStyleDate)
+
+        scribus.createCharStyle(name=self.cStyleDayNames, font="Lato Regular", fontsize=30, fillcolor="Black")
+        scribus.createParagraphStyle(name=self.pStyleDayNames, linespacingmode=0, linespacing=30, alignment=ALIGN_LEFT, charstyle=self.cStyleDayNames)
+
+        scribus.createCharStyle(name=self.cStyleHolidayLabel, font="Lato Light Italic", fontsize=20, fillcolor="Black")
+        scribus.createParagraphStyle(name=self.pStyleHolidayLabel,  linespacingmode=0, linespacing=30, alignment=ALIGN_LEFT, charstyle=self.cStyleHolidayLabel)
+
+        scribus.createCharStyle(name=self.cStyleDateWeekend, font="Lato Regular", fontsize=70, fillcolor="Black")
+        scribus.createParagraphStyle(name=self.pStyleWeekend, linespacingmode=2, alignment=ALIGN_LEFT, charstyle=self.cStyleDateWeekend)
+        scribus.createParagraphStyle(name=self.pStyleHoliday, linespacingmode=2, alignment=ALIGN_LEFT, charstyle=self.cStyleDateWeekend)
+
         scribus.createCustomLineStyle(self.gridLineStyle, [
             {
-                'Color': "gridColor",
+                'Color': "Black",
                 'Width': 0
             }
         ])
         scribus.createCustomLineStyle(self.gridMonthHeadingStyle, [
             {
-                'Color': "gridMonthHeading",
+                'Color': "Black",
                 'Width': 0
             }
         ])
@@ -225,57 +219,58 @@ class ScYearCalendar:
                         self.colSize - 20,
                         self.rowSize
                     )
-                    setFillColor("fillDate", cel)
-                    # setCustomLineStyle(self.gridLineStyle, cel)
+                    setFillColor("White", cel)
+                    setTextColor("Black", cel)
                     setText(str(day.day), cel)
-
+                    setParagraphStyle(self.pStyleDate, cel)
                     # m variable - margin for keep distance between day number, and label
                     m = 0
                     if day.day > 9:
-                        m = 12
+                        m = 15
                     cel_label = createText(
-                        self.marginL + (28 + m) + (month - 1) * self.colSize,
+                        self.marginL + (25 + m) + (month - 1) * self.colSize,
                         self.marginT + row * self.rowSize,
                         (60 - m),
-                        34
+                        self.rowSize
                     )
                     setText(str(day.strftime('%a')), cel_label)
                     deselectAll()
                     selectObject(cel_label)
-                    setTextVerticalAlignment(ALIGNV_BOTTOM, cel_label)
+                    setTextVerticalAlignment(ALIGNV_CENTERED, cel_label)
                     setParagraphStyle(self.pStyleDayNames, cel_label)
-
+                    setTextColor("Black", cel_label)
                     deselectAll()
                     selectObject(cel)
                     if day.weekday() > 4:
                         setParagraphStyle(self.pStyleWeekend, cel)
-                        setTextColor("txtWeekend", cel)
-                        setTextColor("txtWeekend", cel_label)
-                        setFillColor("fillWeekend", cel)
-                    else:
-                        setParagraphStyle(self.pStyleDate, cel)
+                        setTextColor("DarkGrey", cel)
+                        setFillColor("LightGrey", cel)
+                        setTextColor("DarkGrey", cel_label)
                     setTextVerticalAlignment(ALIGNV_CENTERED, cel)
                     for x in range(len(self.holidaysList)):
-                        if (self.holidaysList[x][0] == (day.year) and
-                                self.holidaysList[x][1] == str(day.month) and
-                                self.holidaysList[x][2] == str(day.day)):
-                            if self.holidaysList[x][4] == "":
-                                if getFillColor(cel) != "fillWeekend":
-                                    setTextColor("txtVacation", cel)
-                                    setTextColor("txtVacation", cel_label)
-                                    setFillColor("fillVacation", cel)
-                            elif self.holidaysList[x][4] == '0':
-                                setTextColor("txtSpecialDate", cel)
-                                if getFillColor(cel) == "fillWeekend":
-                                    setFillColor("fillWeekend", cel)
-                                elif getFillColor(cel) == "fillVacation":
-                                    setFillColor("fillVacation", cel)
-                                else:
-                                    setFillColor("fillSpecialDate", cel)
-                            else:
-                                setTextColor("txtHoliday", cel)
-                                setTextColor("txtHoliday", cel_label)
-                                setFillColor("fillHoliday", cel)
+                        if (
+                            self.holidaysList[x][0] == (day.year) and
+                            self.holidaysList[x][1] == str(day.month) and
+                            self.holidaysList[x][2] == str(day.day)
+                        ):
+                            cel_holiday = createText(
+                                self.marginL + 85 + (month - 1) * self.colSize,
+                                self.marginT + row * self.rowSize,
+                                self.colSize - 105,
+                                self.rowSize
+                            )
+                            setTextColor("DarkGrey", cel_holiday)
+                            setText(self.holidaysList[x][3], cel_holiday)
+                            deselectAll()
+                            selectObject(cel_label)
+                            setTextVerticalAlignment(ALIGNV_CENTERED, cel_holiday)
+                            setParagraphStyle(self.pStyleHolidayLabel, cel_holiday)
+                            setTextColor("Black", cel_holiday)
+                            if self.holidaysList[x][4] == "1":
+                                setTextColor("Red", cel)
+                                setTextColor("Red", cel_label)
+                                setTextColor("Red", cel_holiday)
+                                # setFillColor("LightGrey", cel)
         return
 
     def createMonthHeader(self, month):
@@ -288,7 +283,7 @@ class ScYearCalendar:
             self.rowSize
         )
         setText(monthName.upper(), cel)
-        setFillColor("fillMonthHeading", cel)
+        setFillColor("White", cel)
         # setCustomLineStyle(self.gridMonthHeadingStyle, cel)
         deselectAll()
         selectObject(cel)
@@ -359,8 +354,7 @@ class calcHolidays:
         print(__file__)
         from os import path
         file_path = path.dirname(__file__)
-        holidaysFile = path.join(file_path, "PL_holidays.txt")
-        print(holidaysFile)
+        holidaysFile = path.join(file_path, "PL_holidays.csv")
         holidaysList=list()
         try:
             csvfile = open(holidaysFile, mode="rt",  encoding="utf8")
@@ -381,22 +375,22 @@ class calcHolidays:
                     dt=self.calcNthWeekdayOfMonth(int(row[3]), int(row[2]), int(row[1]), int(self.year + 1))
                     holidaysList.append((self.year + 1, str(dt[1]), str(dt[2]), row[4], row[5]))
                 elif row[0] == "variable":
-                    if row[1] == "easter" :
-                        base=self.calcEaster()
-                        dt=self.calcVarHoliday(base, int(row[2]))
+                    if row[1] == "easter":
+                        base = self.calcEaster()
+                        dt = self.calcVarHoliday(base, int(row[2]))
                         holidaysList.append(((dt.year), str(dt.month), str(dt.day), row[4], row[5]))
                         self.year =self. year + 1
-                        base=self.calcEaster()
-                        dt=self.calcVarHoliday(base, int(row[2]))
+                        base = self.calcEaster()
+                        dt = self.calcVarHoliday(base, int(row[2]))
                         holidaysList.append(((dt.year), str(dt.month), str(dt.day), row[4], row[5]))
                         self.year = self.year - 1
-                    elif row[1] == "easterO" :
-                        base=self.calcEasterO()
-                        dt=self.calcVarHoliday(base, int(row[2]))
+                    elif row[1] == "easterO":
+                        base = self.calcEasterO()
+                        dt = self.calcVarHoliday(base, int(row[2]))
                         holidaysList.append(((dt.year), str(dt.month), str(dt.day), row[4], row[5]))
-                        self.year =self. year + 1
-                        base=self.calcEaster()
-                        dt=self.calcVarHoliday(base, int(row[2]))
+                        self.year = self. year + 1
+                        base = self.calcEaster()
+                        dt = self.calcVarHoliday(base, int(row[2]))
                         holidaysList.append(((dt.year), str(dt.month), str(dt.day), row[4], row[5]))
                         self.year = self.year - 1
                 else:
@@ -504,7 +498,7 @@ class TkCalendar(Frame):
         self.yearVar.set(str(datetime.date(1, 1, 1).today().year+1))  # +1 for next year
         self.weekMondayRadio.select()
         self.weekNrHdVar.set("")
-        self.marginTop.set("100")
+        self.marginTop.set("300")
         self.marginRight.set("15")
         self.marginBottom.set("15")
         self.marginLeft.set("15")
@@ -621,22 +615,23 @@ class TkCalendar(Frame):
         if self.holidaysVar.get() == 0:
             holidaysList = list()
         else:
-            holidaysList = []
             hol = calcHolidays(year)
             holidaysList = hol.importHolidays()
             self.statusVar.set('holidaysList')
             holidaysList.sort(key=lambda i: int(i[2]))  # sort on day
             holidaysList.sort(key=lambda i: int(i[1]))  # sort on month
             holidaysList.sort(key=lambda i: i[0])  # sort on year
-        self.statusVar.set('defining ScYearCalendar')
-        cal = ScYearCalendar(
+        cal = BezlikYearCalendar(
             year=year,
             lang=self.lang,
+            marginTop=int(self.marginTopEntry.get()),
+            marginRight=int(self.marginRightEntry.get()),
+            marginBottom=int(self.marginBottomEntry.get()),
+            marginLeft=int(self.marginLeftEntry.get()),
             holidaysList=holidaysList
         )
         self.statusVar.set('withdraw')
         self.master.withdraw()
-        self.statusVar.set('ScYearCalendar.createCalendar()')
         err = cal.createCalendar()
         if err != None:
             self.master.deiconify()
