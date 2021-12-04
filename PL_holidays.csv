@@ -1,6 +1,6 @@
 variable,easter,-46,,Popielec,0
 variable,easter,-2,,Wielki Piątek,0
-variable,easter,0,,Wielkanoc,0
+variable,easter,0,,Wielkanoc,1
 variable,easter,1,,Poniedziałek Wielkanocny,1
 variable,easter,49,,Zielone Świątki,0
 variable,easter,60,,Boże Ciało,1

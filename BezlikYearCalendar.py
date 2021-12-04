@@ -12,8 +12,7 @@ import platform
 try:
     from scribus import *
 except ImportError:
-    print("This Python script is written for the Scribus \
-      scripting interface.")
+    print("This Python script is written for the Scribus scripting interface.")
     print("It can only be run from within Scribus.")
     sys.exit(1)
 
@@ -46,10 +45,11 @@ except ImportError:
 
 
 localization = [
-    ['English', 'CP1252', 'en_US.UTF8'],
-    ['German', 'CP1252', 'de_DE.UTF8'],
-    ['Polish', 'CP1250', 'pl_PL.UTF8'],
-    ['Russian', 'CP1251', 'ru_RU.UTF8'],
+    ['Polish', 'CP1250', 'pl_PL.UTF8', 'PL'],
+    ['English', 'CP1252', 'en_US.UTF8', 'US'],
+    ['French', 'CP1252', 'fr_FR.UTF8', 'FR'],
+    ['German', 'CP1252', 'de_DE.UTF8', 'DE'],
+    ['Russian', 'CP1251', 'ru_RU.UTF8', 'RU'],
 ]
 
 months_names = [
@@ -72,21 +72,29 @@ class BezlikYearCalendar:
     def __init__(
             self,
             year,
-            marginTop=15,
-            marginRight=15,
-            marginBottom=15,
-            marginLeft=15,
+            margin_top=15,
+            margin_right=15,
+            margin_bottom=15,
+            margin_left=15,
+            font_regular="Lato Regular",
+            font_header="Lato Bold",
+            font_holiday="Lato Light Italic",
             lang='English',
-            holidaysList=list()
+            holidays_list=list()
     ):
         self.year = year
-        self.marginTop = marginTop
-        self.marginRight = marginRight
-        self.marginBottom = marginBottom
-        self.marginLeft = marginLeft
+        self.marginTop = margin_top
+        self.marginRight = margin_right
+        self.marginBottom = margin_bottom
+        self.marginLeft = margin_left
+
+        self.font_regular = font_regular
+        self.font_header = font_header
+        self.font_holiday = font_holiday
+
         self.months = [month for month in range(1, 13)]
         self.nrVmonths = 12
-        self.holidaysList = holidaysList
+        self.holidaysList = holidays_list
         if len(self.holidaysList) != 0:
             self.drawHolidays = True
         else:
@@ -103,26 +111,21 @@ class BezlikYearCalendar:
         self.mycal = calendar.Calendar()
         # layers
         self.layerCal = 'Calendar'
+
         # character styles
         self.cStyleMonth = "char_style_Month"
         self.cStyleDayNames = "char_style_DayNames"
         self.cStyleHolidayLabel = "char_style_WeekNo"
         self.cStyleHolidays = "char_style_Holidays"
         self.cStyleDate = "char_style_Date"
-        self.cStyleDateWeekend = "char_style_DateWeekend"
-        self.cStyleLegend = "char_style_Legend"
+
         # paragraph styles
         self.pStyleMonth = "par_style_Month"
         self.pStyleDayNames = "par_style_DayNames"
         self.pStyleHolidayLabel = "par_style_WeekNo"
         self.pStyleHolidays = "par_style_Holidays"
         self.pStyleDate = "par_style_Date"
-        self.pStyleWeekend = "par_style_Weekend"
-        self.pStyleHoliday = "par_style_Holiday"
-        self.pStyleLegend = "par_style_Legend"
-        # line styles
-        self.gridLineStyle = "grid_Line_Style"
-        self.gridMonthHeadingStyle = "grid_Month_Heading_Style"
+
         # other settings
         calendar.setfirstweekday(0)
         progressTotal(12)
@@ -171,37 +174,26 @@ class BezlikYearCalendar:
         defineColorCMYK("MediumGrey", 0, 0, 0, 128)
         defineColorCMYK("Red", 0, 234, 246, 0)
 
-        scribus.createCharStyle(name=self.cStyleMonth, font="Lato Bold", fontsize=70, fillcolor="Black")
-        scribus.createParagraphStyle(name=self.pStyleMonth, linespacingmode=2, alignment=ALIGN_CENTERED, charstyle=self.cStyleMonth)
+        # Month name
+        scribus.createCharStyle(name=self.cStyleMonth, font=self.font_header, fontsize=70, fillcolor="Black")
+        scribus.createParagraphStyle(name=self.pStyleMonth, linespacingmode=0, linespacing=30, alignment=ALIGN_CENTERED, charstyle=self.cStyleMonth)
 
-        scribus.createCharStyle(name=self.cStyleHolidays, font="Lato Regular", fontsize=70, fillcolor="Red")
+        # Holiday date
+        scribus.createCharStyle(name=self.cStyleHolidays, font=self.font_regular, fontsize=70, fillcolor="Red")
         scribus.createParagraphStyle(name=self.pStyleHolidays, linespacingmode=0, linespacing=30, alignment=ALIGN_LEFT, charstyle=self.cStyleHolidays)
 
-        scribus.createCharStyle(name=self.cStyleDate, font="Lato Regular", fontsize=70, fillcolor="Black")
+        # Date (day number)
+        scribus.createCharStyle(name=self.cStyleDate, font=self.font_regular, fontsize=70, fillcolor="Black")
         scribus.createParagraphStyle(name=self.pStyleDate, linespacingmode=2, alignment=ALIGN_LEFT, charstyle=self.cStyleDate)
 
-        scribus.createCharStyle(name=self.cStyleDayNames, font="Lato Regular", fontsize=30, fillcolor="Black")
+        # Day name
+        scribus.createCharStyle(name=self.cStyleDayNames, font=self.font_regular, fontsize=30, fillcolor="Black")
         scribus.createParagraphStyle(name=self.pStyleDayNames, linespacingmode=0, linespacing=30, alignment=ALIGN_LEFT, charstyle=self.cStyleDayNames)
 
-        scribus.createCharStyle(name=self.cStyleHolidayLabel, font="Lato Light Italic", fontsize=20, fillcolor="Black")
+        # Day name
+        scribus.createCharStyle(name=self.cStyleHolidayLabel, font=self.font_holiday, fontsize=20, fillcolor="MediumGrey")
         scribus.createParagraphStyle(name=self.pStyleHolidayLabel,  linespacingmode=0, linespacing=30, alignment=ALIGN_LEFT, charstyle=self.cStyleHolidayLabel)
 
-        scribus.createCharStyle(name=self.cStyleDateWeekend, font="Lato Regular", fontsize=70, fillcolor="Black")
-        scribus.createParagraphStyle(name=self.pStyleWeekend, linespacingmode=2, alignment=ALIGN_LEFT, charstyle=self.cStyleDateWeekend)
-        scribus.createParagraphStyle(name=self.pStyleHoliday, linespacingmode=2, alignment=ALIGN_LEFT, charstyle=self.cStyleDateWeekend)
-
-        scribus.createCustomLineStyle(self.gridLineStyle, [
-            {
-                'Color': "Black",
-                'Width': 0
-            }
-        ])
-        scribus.createCustomLineStyle(self.gridMonthHeadingStyle, [
-            {
-                'Color': "Black",
-                'Width': 0
-            }
-        ])
         # layers
         createLayer(self.layerCal)
 
@@ -220,7 +212,7 @@ class BezlikYearCalendar:
                         self.rowSize
                     )
                     setFillColor("White", cel)
-                    setTextColor("Black", cel)
+                    setTextColor("DarkGrey", cel)
                     setText(str(day.day), cel)
                     setParagraphStyle(self.pStyleDate, cel)
                     # m variable - margin for keep distance between day number, and label
@@ -242,10 +234,9 @@ class BezlikYearCalendar:
                     deselectAll()
                     selectObject(cel)
                     if day.weekday() > 4:
-                        setParagraphStyle(self.pStyleWeekend, cel)
-                        setTextColor("DarkGrey", cel)
+                        setTextColor("Black", cel)
                         setFillColor("LightGrey", cel)
-                        setTextColor("DarkGrey", cel_label)
+                        setTextColor("Black", cel_label)
                     setTextVerticalAlignment(ALIGNV_CENTERED, cel)
                     for x in range(len(self.holidaysList)):
                         if (
@@ -270,21 +261,22 @@ class BezlikYearCalendar:
                                 setTextColor("Red", cel)
                                 setTextColor("Red", cel_label)
                                 setTextColor("Red", cel_holiday)
-                                # setFillColor("LightGrey", cel)
         return
 
     def createMonthHeader(self, month):
         """ Draw month calendars header """
-        monthName = months_names[month-1]
+        if self.lang == 'Polish':
+            month_name = months_names[month-1]
+        else:
+            month_name = calendar.month_name[month]
         cel = createText(
             self.marginL + 10 + (month-1) * self.colSize,
             self.marginT,
             self.colSize - 20,
             self.rowSize
         )
-        setText(monthName.upper(), cel)
+        setText(month_name.upper(), cel)
         setFillColor("White", cel)
-        # setCustomLineStyle(self.gridMonthHeadingStyle, cel)
         deselectAll()
         selectObject(cel)
         setParagraphStyle(self.pStyleMonth, cel)
@@ -295,8 +287,9 @@ class calcHolidays:
     """ Import local holidays from '*holidays.txt'-file and convert the variable
     holidays into dates for the given year."""
 
-    def __init__(self, year):
+    def __init__(self, year, locale_code):
         self.year = year
+        self.locale_code = locale_code
 
     def calcEaster(self):
         """ Calculate Easter date for the calendar Year using Butcher's Algorithm. 
@@ -350,18 +343,16 @@ class calcHolidays:
 
     def importHolidays(self):
         """ Import local holidays from '*holidays.txt'-file."""
-        # holidaysFile = filedialog.askopenfilename(title="Open the 'holidays.txt'-file or cancel")
-        print(__file__)
         from os import path
         file_path = path.dirname(__file__)
-        holidaysFile = path.join(file_path, "PL_holidays.csv")
-        holidaysList=list()
+        holidaysFile = path.join(file_path, "{}_holidays.csv".format(self.locale_code))
+        holidaysList = list()
         try:
             csvfile = open(holidaysFile, mode="rt",  encoding="utf8")
         except Exception as e:
-            print(e)
-            print("Holidays wil NOT be shown.")
-            messageBox("Warning:", "Holidays wil NOT be shown.", ICON_CRITICAL)
+            error = "Holidays wil NOT be shown."
+            print(error)
+            messageBox("Warning:", error, ICON_CRITICAL)
             return holidaysList # returns an empty holidays list
         csvReader = csv.reader(csvfile, delimiter=",")
         for row in csvReader:
@@ -394,12 +385,11 @@ class calcHolidays:
                         holidaysList.append(((dt.year), str(dt.month), str(dt.day), row[4], row[5]))
                         self.year = self.year - 1
                 else:
-                    pass #do nothing
+                    pass
             except:
-                print("Not a valid Holidays file.\nHolidays wil NOT be shown.")
-                messageBox("Warning:",
-                    "Not a valid Holidays file.\nHolidays wil NOT be shown.",
-                    ICON_CRITICAL)
+                error = "Not a valid Holidays file.\nHolidays wil NOT be shown."
+                print(error)
+                messageBox("Warning:", error, ICON_CRITICAL)
                 break
         csvfile.close()
         return holidaysList
@@ -413,7 +403,12 @@ class TkCalendar(Frame):
         Frame.__init__(self, master)
         self.grid()
         self.master.resizable(0, 0)
-        self.master.title('Scribus Year Calendar')
+        self.master.title('Bezlik Year Calendar')
+
+        #default language variables
+        self.lang = localization[0][0]
+        self.locale_str = localization[0][2]
+        self.locale_code = localization[0][3]
 
         #define widgets
         self.statusVar = StringVar()
@@ -425,46 +420,31 @@ class TkCalendar(Frame):
         self.langFrame.grid()
         self.langScrollbar = Scrollbar(self.langFrame, orient=VERTICAL)
         self.langScrollbar.grid(row=0, column=1, sticky=N+S)
-        self.langListbox = Listbox(self.langFrame, selectmode=SINGLE, height=12,
-            yscrollcommand=self.langScrollbar.set)
+        self.langListbox = Listbox(self.langFrame, selectmode=SINGLE, height=4, yscrollcommand=self.langScrollbar.set)
         self.langListbox.grid(row=0, column=0, sticky=N+S+E+W)
         self.langScrollbar.config(command=self.langListbox.yview)
         for i in range(len(localization)):
             self.langListbox.insert(END, localization[i][0])
         self.langButton = Button(self, text='Change language', command=self.languageChange)
-        # choose font
-        self.fontLabel = Label(self, text='Change font:')
-        self.fontFrame = Frame(self)
-        self.fontScrollbar = Scrollbar(self.fontFrame, orient=VERTICAL)
-        self.fontListbox = Listbox(self.fontFrame, selectmode=SINGLE, height=12, yscrollcommand=self.fontScrollbar.set)
-        self.fontScrollbar.config(command=self.fontListbox.yview)
-        fonts = getFontNames()
-        fonts.sort()
-        for i in fonts:
-            self.fontListbox.insert(END, i)
-        self.font = 'Lato Regular'
-        self.font_bold = 'Lato Bold'
-        self.fontButton = Button(self, text='Apply selected font', command=self.fontApply)
 
         # year
         self.yearLabel = Label(self, text='Year:')
         self.yearVar = StringVar()
         self.yearEntry = Entry(self, textvariable=self.yearVar, width=4)
 
-        # start of week
-        self.weekStartsLabel = Label(self, text='Week begins with:')
-        self.weekVar = IntVar()
-        self.weekMondayRadio = Radiobutton(self, text='Mon', variable=self.weekVar, value=calendar.MONDAY)
-        self.weekSundayRadio = Radiobutton(self, text='Sun', variable=self.weekVar, value=calendar.SUNDAY)
-
-        # include week number
-        self.weekNrLabel = Label(self, text='Show week numbers:')
-        self.weekNrVar = IntVar()
-        self.weekNrCheck = Checkbutton(self, variable=self.weekNrVar)
-        self.weekNrHdLabel = Label(self, text='Week numbers heading:')
-        self.weekNrHdVar = StringVar()
-        self.weekNrHdEntry = Entry(self, textvariable=self.weekNrHdVar, width=6)
+        # fonts
+        self.fontHeaderLabel = Label(self, text='Date font:')
+        self.fontHeaderVar = StringVar()
+        self.fontHeaderEntry = Entry(self, textvariable=self.fontHeaderVar, width=15)
         
+        self.fontLabel = Label(self, text='Day name font:')
+        self.fontVar = StringVar()
+        self.fontEntry = Entry(self, textvariable=self.fontVar, width=15)
+
+        self.fontHolidayLabel = Label(self, text='Holiday font:')
+        self.fontHolidayVar = StringVar()
+        self.fontHolidayEntry = Entry(self, textvariable=self.fontHolidayVar, width=15)
+
         # offsetX, offsetY and inner margins
         self.marginTopLabel = Label(self, text='Margin top (mm):')
         self.marginTop = DoubleVar()
@@ -496,8 +476,9 @@ class TkCalendar(Frame):
 
         # setup values
         self.yearVar.set(str(datetime.date(1, 1, 1).today().year+1))  # +1 for next year
-        self.weekMondayRadio.select()
-        self.weekNrHdVar.set("")
+        self.fontVar.set("Lato Regular")
+        self.fontHeaderVar.set("Lato Bold")
+        self.fontHolidayVar.set("Lato Light Italic")
         self.marginTop.set("300")
         self.marginRight.set("15")
         self.marginBottom.set("15")
@@ -510,44 +491,31 @@ class TkCalendar(Frame):
         currRow = 0
         self.statusLabel.grid(column=0, row=currRow, columnspan=4)
         currRow += 1
-        self.langLabel.grid(column=0, row=currRow, sticky=W)
-        self.fontLabel.grid(column=1, row=currRow, sticky=W) 
+        self.langLabel.grid(column=0, row=currRow, columnspan=4)
         currRow += 1
-        self.langFrame.grid(column=0, row=currRow, rowspan=6, sticky=N)
-        self.fontFrame.grid(column=1, row=currRow, sticky=N)
-        self.fontScrollbar.grid(column=1, row=currRow, sticky=N+S+E)
-        self.fontListbox.grid(column=0, row=currRow, sticky=N+S+W)
-        currRow += 2
-        self.langButton.grid(column=0, row=currRow)
-        self.fontButton.grid(column=1, row=currRow)
+        self.langFrame.grid(column=0, row=currRow, columnspan=4, rowspan=3, sticky=N)
+        currRow += 4
+        self.langButton.grid(column=0, row=currRow, columnspan=4)
         currRow += 1
         self.yearLabel.grid(column=0, row=currRow, sticky=S+E)
         self.yearEntry.grid(column=1, row=currRow, sticky=S+W)
-        currRow += 1
         self.marginRightLabel.grid(column=2, row=currRow, sticky=S+E)
         self.marginRightEntry.grid(column=3, row=currRow, sticky=S+W)
         currRow += 1
-        self.weekStartsLabel.grid(column=0, row=currRow, sticky=S+E)
-        self.weekMondayRadio.grid(column=1, row=currRow, sticky=S+W)
+        self.fontLabel.grid(column=0, row=currRow, sticky=N+E)
+        self.fontEntry.grid(column=1, row=currRow, sticky=N+W)
         self.marginLeftLabel.grid(column=2, row=currRow, sticky=N+E)
         self.marginLeftEntry.grid(column=3, row=currRow, sticky=W)
         currRow += 1
-        self.weekSundayRadio.grid(column=1, row=currRow, sticky=N+W)
+        self.fontHeaderLabel.grid(column=0, row=currRow, sticky=N+E)
+        self.fontHeaderEntry.grid(column=1, row=currRow, sticky=N+W)
         self.marginTopLabel.grid(column=2, row=currRow, sticky=S+E)
         self.marginTopEntry.grid(column=3, row=currRow, sticky=S+W)
         currRow += 1
-        self.weekNrLabel.grid(column=0, row=currRow, sticky=N+E)
-        self.weekNrCheck.grid(column=1, row=currRow, sticky=N+W)
+        self.fontHolidayLabel.grid(column=0, row=currRow, sticky=N+E)
+        self.fontHolidayEntry.grid(column=1, row=currRow, sticky=N+W)
         self.marginBottomLabel.grid(column=2, row=currRow, sticky=N+E)
         self.marginBottomEntry.grid(column=3, row=currRow, sticky=W)
-        currRow += 1
-        self.weekNrHdLabel.grid(column=0, row=currRow, sticky=N+E)
-        self.weekNrHdEntry.grid(column=1, row=currRow, sticky=N+W)
-        currRow += 1
-        self.holidaysLabel.grid(column=0, row=currRow, sticky=N+E)
-        self.holidaysCheck.grid(column=1, row=currRow, sticky=N+W)
-        self.legendLabel.grid(column=2, row=currRow, sticky=N+E)
-        self.legendCheck.grid(column=3, row=currRow, sticky=N+W)
         currRow += 1
         self.rowconfigure(currRow, pad=6)
         self.okButton.grid(column=1, row=currRow, sticky=E)
@@ -563,39 +531,29 @@ class TkCalendar(Frame):
         if len(ix) == 0:
             self.statusVar.set('languageChange')
             return
-        langX = self.langListbox.get(ix[0])
-        self.lang = langX
-        if os == "Windows":
-            x = langX
-        else: # Linux
-            iy = [[x[0] for x in localization].index(self.lang)]
-            x = (localization[iy[0]][2])
+        self.lang = self.langListbox.get(ix[0])
+        iy = [[locale_str[0] for locale_str in localization].index(self.lang)]
+        self.locale_str = (localization[iy[0]][2])
+        self.locale_code = localization[iy[0]][3]
         try:
-            locale.setlocale(locale.LC_CTYPE, x)
-            locale.setlocale(locale.LC_TIME, x)
+            locale.setlocale(locale.LC_CTYPE, self.locale_str)
+            locale.setlocale(locale.LC_TIME, self.locale_str)
         except locale.Error:
-            print("Language " + x + " is not installed on your operating system.")
-            self.statusVar.set("Language '" + x + "' is not installed on your operating system")
+            error = "Language {} is not installed on your operating system.".format(self.locale_str)
+            print(error)
+            self.statusVar.set(error)
             returnroot
-        self.realLangChange(langX)
+        self.realLangChange(self.lang)
 
-    def realLangChange(self, langX='Polish'):
+    def realLangChange(self, lang_x='Polish'):
         """ Real widget setup. It takes values from localization list.
         [0] = months, [1] Days """
-        self.lang = langX
+        self.lang = lang_x
         if os == "Windows":
             ix = [[x[0] for x in localization].index(self.lang)]
-            self.calUniCode = (localization[ix[0]][1]) # get unicode page for the selected language
-        else: # Linux
+            self.calUniCode = (localization[ix[0]][1])  # get unicode page for the selected language
+        else:  # Linux
             self.calUniCode = "UTF-8"
-
-    def fontApply(self):
-        """ Font selection. Called by "Apply selected font" button click. """
-        ix = self.fontListbox.curselection()
-        if len(ix) == 0:
-            self.statusVar.set('Please select a font.')
-            return
-        self.font = self.fontListbox.get(ix[0])
 
     def okButton_pressed(self):
         """ User variables testing and preparing """
@@ -609,13 +567,16 @@ class TkCalendar(Frame):
             self.statusVar.set('Year must be in the "YYYY" format e.g. 2020.')
             return
         fonts = getFontNames()
-        if self.font not in fonts:
+        font_regular = self.fontVar.get().strip()
+        font_header = self.fontHeaderVar.get().strip()
+        font_holiday = self.fontHolidayVar.get().strip()
+        if font_regular not in fonts or font_header not in fonts or font_holiday not in fonts:
             self.statusVar.set('Please select a font.')
             return
         if self.holidaysVar.get() == 0:
             holidaysList = list()
         else:
-            hol = calcHolidays(year)
+            hol = calcHolidays(year, self.locale_code)
             holidaysList = hol.importHolidays()
             self.statusVar.set('holidaysList')
             holidaysList.sort(key=lambda i: int(i[2]))  # sort on day
@@ -624,11 +585,14 @@ class TkCalendar(Frame):
         cal = BezlikYearCalendar(
             year=year,
             lang=self.lang,
-            marginTop=int(self.marginTopEntry.get()),
-            marginRight=int(self.marginRightEntry.get()),
-            marginBottom=int(self.marginBottomEntry.get()),
-            marginLeft=int(self.marginLeftEntry.get()),
-            holidaysList=holidaysList
+            font_regular=font_regular,
+            font_header=font_header,
+            font_holiday=font_holiday,
+            margin_top=int(self.marginTopEntry.get()),
+            margin_right=int(self.marginRightEntry.get()),
+            margin_bottom=int(self.marginBottomEntry.get()),
+            margin_left=int(self.marginLeftEntry.get()),
+            holidays_list=holidaysList
         )
         self.statusVar.set('withdraw')
         self.master.withdraw()

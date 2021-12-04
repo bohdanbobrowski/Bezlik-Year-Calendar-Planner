@@ -10,7 +10,7 @@ so the code is quite messy after I've removed a lot of interactive stuff, I didn
 * Scribus
 * [Lato Font](https://www.latofonts.com/pl/lato-free-fonts/) installed
 
-I've tested that on Manjaro Linux. No idea if it'll work on Windows or OSX.
+I've tested that on Manjaro Linux. No idea if it'll work on Windows.
 
 ### Usage
 
@@ -21,5 +21,7 @@ I've tested that on Manjaro Linux. No idea if it'll work on Windows or OSX.
 5. Generate, and enjoy!
 
 ### Example
+
+[PDF generated in Scribus](https://raw.githubusercontent.com/bohdanbobrowski/Bezlik-Year-Calendar-Planner/master/BezlikYearCalendar.pdf)
 
 <img src="https://raw.githubusercontent.com/bohdanbobrowski/Bezlik-Year-Calendar-Planner/master/BezlikYearCalendar.gif" />
