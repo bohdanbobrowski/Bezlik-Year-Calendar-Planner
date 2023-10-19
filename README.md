@@ -25,5 +25,9 @@ I've tested that on Manjaro Linux, Ubuntu and Windows.
 #### Polish 
 
 [PDF generated in Scribus](https://raw.githubusercontent.com/bohdanbobrowski/Bezlik-Year-Calendar-Planner/master/BezlikYearCalendar_pl.pdf)
-
 <img src="https://raw.githubusercontent.com/bohdanbobrowski/Bezlik-Year-Calendar-Planner/master/BezlikYearCalendar_pl.png" />
+
+#### German
+
+[PDF generated in Scribus](https://raw.githubusercontent.com/bohdanbobrowski/Bezlik-Year-Calendar-Planner/master/BezlikYearCalendar_de.pdf)
+<img src="https://raw.githubusercontent.com/bohdanbobrowski/Bezlik-Year-Calendar-Planner/master/BezlikYearCalendar_de.png" />
