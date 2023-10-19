@@ -24,4 +24,4 @@ I've tested that on Manjaro Linux, Ubuntu and Windows.
 
 [PDF generated in Scribus](https://raw.githubusercontent.com/bohdanbobrowski/Bezlik-Year-Calendar-Planner/master/BezlikYearCalendar.pdf)
 
-<img src="https://raw.githubusercontent.com/bohdanbobrowski/Bezlik-Year-Calendar-Planner/master/BezlikYearCalendar.png" />
+<img src="https://raw.githubusercontent.com/bohdanbobrowski/Bezlik-Year-Calendar-Planner/master/BezlikYearCalendar_pl.png" />
