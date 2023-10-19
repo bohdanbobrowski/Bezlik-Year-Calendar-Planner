@@ -7,10 +7,10 @@ so the code is quite messy after I've removed a lot of interactive stuff, I didn
 
 ### Requirements
 
-* Scribus
+* Scribus 1.5.x - **and this is important! current stable version 1.4.x contains Python 2.7 interpreter and this script requires Python 3** 
 * [Lato Font](https://www.latofonts.com/pl/lato-free-fonts/) installed
 
-I've tested that on Manjaro Linux. No idea if it'll work on Windows.
+I've tested that on Manjaro Linux, Ubuntu and Windows.
 
 ### Usage
 
@@ -24,4 +24,4 @@ I've tested that on Manjaro Linux. No idea if it'll work on Windows.
 
 [PDF generated in Scribus](https://raw.githubusercontent.com/bohdanbobrowski/Bezlik-Year-Calendar-Planner/master/BezlikYearCalendar.pdf)
 
-<img src="https://raw.githubusercontent.com/bohdanbobrowski/Bezlik-Year-Calendar-Planner/master/BezlikYearCalendar.gif" />
+<img src="https://raw.githubusercontent.com/bohdanbobrowski/Bezlik-Year-Calendar-Planner/master/BezlikYearCalendar.png" />

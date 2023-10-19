@@ -1,13 +1,10 @@
-#!/usr/bin/python
-#-*- coding: utf-8 -*-
-from __future__ import division # overrules Python 2 integer division
-import sys
-import locale
 import calendar
-import datetime
-from datetime import date, timedelta
 import csv
+import datetime
+import locale
 import platform
+import sys
+from datetime import timedelta
 
 try:
     from scribus import *
@@ -16,19 +13,11 @@ except ImportError:
     print("It can only be run from within Scribus.")
     sys.exit(1)
 
-os = platform.system()
-if os != "Windows" and os != "Linux":
-    print("Your Operating System is not supported by this script.")
-    messageBox("Script failed",
-        "Your Operating System is not supported by this script.",
-        ICON_CRITICAL)	
-    sys.exit(1)
-
 python_version = platform.python_version()
 if python_version[0:1] != "3":
-    print("This script runs only with Python 3.")
+    print("This script runs only with Python 3 (Scribus 1.5.x).")
     messageBox("Script failed",
-        "This script runs only with Python 3.",
+        "This script runs only with Python 3 (Scribus 1.5.x).",
         ICON_CRITICAL)	
     sys.exit(1)
 
