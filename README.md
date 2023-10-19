@@ -20,8 +20,10 @@ I've tested that on Manjaro Linux, Ubuntu and Windows.
 4. Customize parameters (margins etc.).
 5. Generate, and enjoy!
 
-### Example
+## Example
 
-[PDF generated in Scribus](https://raw.githubusercontent.com/bohdanbobrowski/Bezlik-Year-Calendar-Planner/master/BezlikYearCalendar.pdf)
+#### Polish 
+
+[PDF generated in Scribus](https://raw.githubusercontent.com/bohdanbobrowski/Bezlik-Year-Calendar-Planner/master/BezlikYearCalendar_pl.pdf)
 
 <img src="https://raw.githubusercontent.com/bohdanbobrowski/Bezlik-Year-Calendar-Planner/master/BezlikYearCalendar_pl.png" />
