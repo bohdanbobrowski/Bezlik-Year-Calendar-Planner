@@ -1,4 +1,14 @@
 # Bezlik Year Calendar Planner
+## <span style="color:red">Warning!</span> this script is full of bugs: 
+- generated page is not A1 of size but slightly larger
+- you need to resize iot manually
+
+
+> <b>In general:</b> whole Scribus API is quite weird and hard to use, test and debug, and the script below is a modification of something ready found on the internet... one big mess...
+
+## This should be rewritten as standalone tkinter application
+
+### Otherwise you can continue:
 
 [Scribus](https://www.scribus.net/) script for creating year planners on one page A1 paper format.
 
